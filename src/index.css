@@ -1,0 +1,232 @@
+import { useMemo, useState } from 'react';
+
+const defaultState = {
+  title: '雨夜里的告白',
+  style: '国漫电影感',
+  mood: '青春治愈',
+  duration: '90秒',
+  premise:
+    '在雨夜的校园天台，两个曾经失联的少年在一次告白前重新相遇，经历遗憾与成长，最终学会坦白与原谅。',
+  characters: '男主、女主、同学A、旁白',
+};
+
+function generateStory(data) {
+  const title = data.title || 'AI 漫剧故事';
+  const style = data.style || '国漫电影感';
+  const mood = data.mood || '青春治愈';
+  const duration = data.duration || '90秒';
+  const premise = data.premise || '一段温柔却错过的青春故事。';
+  const characterList = (data.characters || '男主、女主、同学A、旁白')
+    .split(/[，,、]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const generatedShots = [
+    {
+      scene: '雨夜校园',
+      action: '男主在雨中站在天台，回想起与女主的旧日瞬间。',
+      dialogue: '旁白：那时我们都以为来不及，可后来才知道，真正失去的，是勇气。',
+      prompt:
+        `${style}, ${mood}, 午夜雨夜, 校园天台, 男主站立在雨中, 细雨飘落, 电影级光影, 动漫分镜, 表情真实, 镜头缓慢推进, 高细节, 充满情绪`,
+    },
+    {
+      scene: '教室回忆',
+      action: '女孩的笑容在窗边清晰浮现，教室里传来不远处的风声。',
+      dialogue: '女主：你是不是一直没说，是因为怕我笑你？',
+      prompt:
+        `${style}, ${mood}, 教室窗边, 明暗对比, 女主低头微笑, 温柔校服, 细节丰富, 电影光感, 动漫风格, 镜头侧景, 高分辨率`,
+    },
+    {
+      scene: '天台对峙',
+      action: '男主终于站到女主身边，雨越下越大，呼吸也骤然加快。',
+      dialogue: '男主：我不是没喜欢过，我只是怕错过后，连解释都没有机会。',
+      prompt:
+        `${style}, ${mood}, 雨夜天台, 两人面对面, 情绪冲突, 动态镜头, 灯光人物轮廓清晰, 细雨和夜色, 强情绪叙事`,
+    },
+    {
+      scene: '告白收束',
+      action: '天亮时，男主终于向女主说出那句未曾道出的心意。',
+      dialogue: '男主：如果可以，我想从现在开始，认真地和你在一起。',
+      prompt:
+        `${style}, ${mood}, 晨光升起, 天台清晨, 两人大笑, 温暖的色调, 漫画感构图, 轻柔镜头推进, 充满希望, 动态电影感`,
+    },
+  ];
+
+  return {
+    title,
+    style,
+    mood,
+    duration,
+    premise,
+    characters: characterList,
+    summary: `${title} 是一部${style}风格的${mood}故事，围绕“勇敢表达与重新开始”展开，时长约${duration}。故事从雨夜校园的记忆起笔，逐步推进到告白与和解，情绪层层递进，适合做短视频或 AI 漫剧试片。`,
+    shots: generatedShots,
+  };
+}
+
+export default function App() {
+  const [form, setForm] = useState(defaultState);
+  const [story, setStory] = useState(() => generateStory(defaultState));
+
+  const storyPreview = useMemo(() => story, [story]);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setStory(generateStory(form));
+  };
+
+  return (
+    <div className="app-shell">
+      <header className="topbar">
+        <div>
+          <p className="eyebrow">AI 创作工具</p>
+          <h1>漫剧工坊 AI</h1>
+        </div>
+        <button className="ghost-button">导出分镜</button>
+      </header>
+
+      <main className="content-grid">
+        <section className="panel panel-form">
+          <h2>故事设定</h2>
+          <form onSubmit={handleSubmit} className="story-form">
+            <label>
+              剧名
+              <input
+                type="text"
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+              />
+            </label>
+
+            <label>
+              风格
+              <select name="style" value={form.style} onChange={handleChange}>
+                <option>国漫电影感</option>
+                <option>日漫治愈</option>
+                <option>赛博朋克</option>
+                <option>唯美青春</option>
+                <option>悬疑复仇</option>
+              </select>
+            </label>
+
+            <label>
+              情绪
+              <select name="mood" value={form.mood} onChange={handleChange}>
+                <option>青春治愈</option>
+                <option>温馨浪漫</option>
+                <option>热血成长</option>
+                <option>悬疑压抑</option>
+                <option>奇幻冒险</option>
+              </select>
+            </label>
+
+            <label>
+              时长
+              <select name="duration" value={form.duration} onChange={handleChange}>
+                <option>30秒</option>
+                <option>60秒</option>
+                <option>90秒</option>
+                <option>2分钟</option>
+                <option>5分钟</option>
+              </select>
+            </label>
+
+            <label>
+              故事简介
+              <textarea
+                name="premise"
+                rows="5"
+                value={form.premise}
+                onChange={handleChange}
+              />
+            </label>
+
+            <label>
+              角色列表
+              <input
+                type="text"
+                name="characters"
+                value={form.characters}
+                onChange={handleChange}
+              />
+            </label>
+
+            <button type="submit" className="primary-button">
+              生成漫剧脚本
+            </button>
+          </form>
+        </section>
+
+        <section className="panel panel-output">
+          <div className="output-header">
+            <div>
+              <p className="eyebrow">剧本输出</p>
+              <h2>{storyPreview.title}</h2>
+            </div>
+            <span className="badge">{storyPreview.duration}</span>
+          </div>
+
+          <div className="story-summary card">
+            <h3>故事概述</h3>
+            <p>{storyPreview.summary}</p>
+          </div>
+
+          <div className="story-summary card">
+            <h3>故事简介</h3>
+            <p>{storyPreview.premise}</p>
+          </div>
+
+          <div className="character-grid">
+            {storyPreview.characters.map((name, index) => (
+              <div key={`${name}-${index}`} className="character-card card">
+                <div className="avatar">{name.slice(0, 1)}</div>
+                <div>
+                  <h4>{name}</h4>
+                  <p>{storyPreview.style} · {storyPreview.mood}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel panel-shots">
+          <div className="output-header">
+            <div>
+              <p className="eyebrow">分镜列表</p>
+              <h2>镜头脚本</h2>
+            </div>
+          </div>
+
+          <div className="shots-list">
+            {storyPreview.shots.map((shot, index) => (
+              <article key={`${shot.scene}-${index}`} className="shot-card card">
+                <div className="shot-header">
+                  <span className="shot-index">镜头 {index + 1}</span>
+                  <strong>{shot.scene}</strong>
+                </div>
+                <p>
+                  <span className="label">动作：</span>
+                  {shot.action}
+                </p>
+                <p>
+                  <span className="label">台词：</span>
+                  {shot.dialogue}
+                </p>
+                <div className="prompt-box">
+                  <span className="label">画面提示词：</span>
+                  <p>{shot.prompt}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
